@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Our Secret</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Dancing+Script:wght@700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#5a0a1a;color:white;font-family:'Poppins',sans-serif;overflow-x:hidden}
+html{overflow-x:hidden}
+.screen{display:none;width:100%;min-height:100vh;justify-content:center;align-items:center;flex-direction:column;position:relative}
+.screen.active{display:flex}
+.heart-bg{position:absolute;font-size:20px;opacity:0.1;animation:float 6s infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}
+.pin-card{background:#6d1423;border:2px solid white;border-radius:20px;padding:40px 30px;width:380px;max-width:90%;text-align:center;box-shadow:0 0 30px rgba(0,0,0,0.5)}
+.bear-icon{font-size:50px;margin-bottom:10px}
+.pin-card h2{font-size:28px;font-weight:700;margin-bottom:5px}
+.pin-card p{font-size:13px;opacity:0.8;margin-bottom:20px}
+.music-btn{background:white;color:#333;border:none;border-radius:50px;padding:10px 20px;display:flex;gap:10px;font-size:13px;font-weight:600;margin-bottom:25px;cursor:pointer;align-items:center;width:80%;margin:0 auto 25px}
+.music-icon{font-size:22px}
+.pin-inputs{display:flex;gap:12px;justify-content:center;margin-bottom:20px}
+.pin-inputs input{width:55px;height:55px;background:transparent;border:2px solid white;border-radius:12px;text-align:center;font-size:16px;color:white;font-weight:bold;caret-color:#ff4d6d}
+.pin-inputs input:focus{outline:none;border-color:#ff4d6d;border-width:3px}
+.btn{background:white;color:#5a0a1a;border:none;padding:12px 45px;border-radius:50px;font-weight:700;font-size:16px;cursor:pointer;margin-bottom:12px}
+.btn-clue{color:white;text-decoration:underline;font-size:12px;cursor:pointer;background:none;border:none;display:block;width:100%;text-align:center}
+.popup-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:none;justify-content:center;align-items:center;z-index:999;backdrop-filter:blur(5px)}
+.popup{background:#6d1423;color:white;border:2px solid white;border-radius:20px;padding:30px 25px;text-align:center;width:350px;max-width:90%}
+.popup h2{font-size:22px;margin-bottom:10px}
+.popup p{font-size:14px;margin-bottom:20px;opacity:0.9}
+.welcome h1{font-family:'Dancing Script',cursive;font-size:42px;margin-bottom:10px}
+.welcome p{margin-bottom:30px;font-size:15px}
+.btn-love{background:#7d1a2a;color:white;border:none;padding:15px 40px;border-radius:50px;font-weight:700;font-size:16px;cursor:pointer}
+.counter{background:rgba(255,255,255,0.95);color:#333;padding:12px 25px;border-radius:50px;font-weight:700;position:absolute;top:40px;font-size:14px;display:flex;gap:8px;align-items:center}
+.tap-text{font-size:18px;font-weight:700;position:absolute;top:90px;text-align:center}
+.heart-game{position:absolute;font-size:45px;cursor:pointer;z-index:5;animation:fall 4s linear}
+@keyframes fall{from{top:-50px}to{top:100vh}}
+.confetti{position:absolute;width:6px;height:6px;z-index:200;animation:explode 0.8s forwards}
+@keyframes explode{to{transform:translate(var(--x),var(--y));opacity:0}}
+.popup-white{background:white;color:#5a0a1a;border-radius:20px;padding:35px 30px;text-align:center;width:400px;max-width:90%;border:3px solid #5a0a1a}
+.popup-white h2{font-family:'Dancing Script',cursive;font-size:36px;color:#5a0a1a;margin-bottom:15px}
+.popup-white .btn{background:#5a0a1a;color:white}
+.loading{text-align:center}
+.loading-bar{width:300px;height:8px;background:#2b000e;border-radius:10px;margin:15px auto;position:relative}
+.loading-fill{height:100%;width:0%;background:white;border-radius:10px}
+.loading-heart{position:absolute;top:-12px;left:0%;font-size:20px}
+.stats{background:rgba(255,255,255,0.95);color:#333;padding:12px 25px;border-radius:50px;font-weight:700;margin-bottom:30px;font-size:14px;display:flex;gap:15px}
+.memory-grid{display:grid;grid-template-columns:repeat(4,85px);gap:15px}
+.memory-card{width:85px;height:85px;position:relative;transition:transform 0.5s;cursor:pointer}
+.memory-card.flipped .card-front{opacity:1}
+.memory-card.flipped .card-back{opacity:0}
+.card-face{position:absolute;width:100%;height:100%;border-radius:15px;display:flex;justify-content:center;align-items:center;font-size:32px;border:2px solid white;transition:opacity 0.3s}
+.card-back{background:#6d1423;opacity:1}
+.card-front{background:white;color:#5a0a1a;opacity:0}
+.memory-card.matched{opacity:0.3;pointer-events:none}
+
+/* LETTER PAGE */
+.letter-page{background:linear-gradient(135deg, #5a0a1a 0%, #3d0612 100%);padding:20px;overflow-y:auto}
+.notification{background:white;color:#5a0a1a;padding:15px 20px;border-radius:15px;margin:20px auto;width:90%;max-width:400px;font-size:14px;box-shadow:0 5px 15px rgba(0,0,0,0.3)}
+.frame{border:2px solid rgba(255,255,255,0.2);border-radius:20px;padding:30px;margin:20px auto 40px;max-width:500px}
+.main-content{display:flex;flex-direction:column;align-items:center;gap:40px}
+.polaroid{background:white;padding:15px 15px 60px 15px;width:320px;max-width:90%;transform:rotate(-5deg);box-shadow:0 15px 35px rgba(0,0,0,0.6);position:relative}
+.polaroid img{width:100%;height:280px;object-fit:cover;background:#ddd}
+.polaroid-text{color:#5a0a1a;font-family:'Dancing Script',cursive;font-size:24px;margin-top:10px;text-align:center}
+.polaroid-name{position:absolute;color:white;font-size:16px;font-weight:700;text-shadow:2px 2px 4px rgba(0,0,0,0.8)}
+.envelopes{display:flex;flex-direction:column;align-items:center;gap:25px}
+.envelope{cursor:pointer;text-align:center}
+.envelope-box{width:120px;height:120px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:45px;margin-bottom:8px;border:3px solid}
+.env1{background:#f5e6c8;border-color:#e0b88a}
+.env2{display:none} /* INI YG DIHIDE */
+.env2-box{background:#dbeafe;border-color:#93c5fd} /* BOX NYA */
+.envelope p{font-size:14px}
+
+/* SURAT POPUP */
+.letter-popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;justify-content:center;align-items:center;z-index:999;padding:20px}
+.letter-card{background:#fffdf8;color:#333;border:4px solid #5a0a1a;border-radius:15px;padding:40px 30px;width:600px;max-width:90%;max-height:80vh;overflow-y:auto;position:relative}
+.letter-card h2{font-family:'Dancing Script',cursive;font-size:32px;text-align:center;color:#5a0a1a;margin-bottom:25px}
+.letter-card p{line-height:1.8;font-size:15px}
+.close-btn{position:absolute;top:15px;right:20px;font-size:28px;cursor:pointer;color:#5a0a1a}
+</style>
+</head>
+<body>
+
+<audio id="bgmusic" loop><source src="musik.mp3"></audio>
+
+<div class="heart-bg" style="top:10%;left:10%">❤️</div>
+<div class="heart-bg" style="top:70%;left:80%">❤️</div>
+
+<!-- 1. PIN -->
+<div class="screen active" id="pin">
+<div class="pin-card">
+<div class="bear-icon">🧸</div>
+<h2>confidential</h2>
+<p>Enter our magic digits to unlock</p>
+<button class="music-btn" onclick="bgmusic.play()"><div class="music-icon">🎵</div> <div><b>Glue Song</b><br><span style="font-size:10px">Beabadoobee</span></div></button>
+<div class="pin-inputs">
+  <input maxlength="1" class="pin-input" inputmode="numeric">
+  <input maxlength="1" class="pin-input" inputmode="numeric">
+  <input maxlength="1" class="pin-input" inputmode="numeric">
+  <input maxlength="1" class="pin-input" inputmode="numeric">
+</div>
+<button class="btn" onclick="checkPin()">Open</button>
+<button class="btn-clue" onclick="cluePopup.style.display='flex'">Need a clue?</button>
+</div></div>
+
+<!-- 2. WELCOME -->
+<div class="screen" id="welcome"><div class="welcome"><h1><i>hi, sayang!</i></h1><p>i have something special for u</p><button class="btn-love" onclick="show('love');startLove()">start with love 💖</button></div></div>
+
+<!-- 3. LOVE GAME -->
+<div class="screen" id="love"><div class="counter">✨ collected hearts: <span id="hc">0</span>/14</div><p class="tap-text">TAP TO SHOOT THE HEART!</p></div>
+
+<!-- 4. LOADING -->
+<div class="screen" id="loading"><div class="loading"><div class="loading-bar"><div class="loading-fill" id="lf"></div><div class="loading-heart" id="lh">💖</div></div><p>collecting data...</p></div></div>
+
+<!-- 5. MEMORY -->
+<div class="screen" id="memory"><div class="stats">⏳ Time: <span id="time">60</span>s | ❤️ Match: <span id="match">0</span>/8</div><div class="memory-grid" id="grid"></div></div>
+
+<!-- 6. LETTER PAGE -->
+<div class="screen letter-page" id="letterPage">
+<div class="notification"><b>new notification from vely</b><br><span>Hope u like it <3</span></div>
+<div class="frame"><div class="main-content">
+<div class="polaroid">
+<img src="foto.jpg?v=1">
+  <p class="polaroid-text">happiest birthday :3</p>
+</div>
+<div class="envelopes">
+  <div class="envelope" onclick="openLetter(1)">
+    <div class="envelope-box env1">💌</div>
+    <p>A letter for you</p>
+  </div>
+  <div class="envelope" id="env2" onclick="openLetter(2)" style="display:none"> <!-- UDAH DISEMBUNYIKAN DARI SINI -->
+    <div class="envelope-box env2-box">💌</div> <!-- GANTI CLASS -->
+    <p>One more letter</p>
+  </div>
+</div>
+</div></div></div>
+
+<!-- POPUPS -->
+<div class="popup-overlay" id="cluePopup"><div class="popup"><h2>💡 Clue for You</h2><p>That special day when the world<br>the password is your birth year 👑</p><button class="btn" onclick="cluePopup.style.display='none'">Got it!</button></div></div>
+<div class="popup-overlay" id="wrongPopup"><div class="popup"><h2>Wrong PIN!</h2><p>You're wrong, but I still love you</p><button class="btn" onclick="wrongPopup.style.display='none'">Try Again 💖</button></div></div>
+<div class="popup-overlay" id="pop1"><div class="popup-white"><h2><i>Happy birthday, love</i></h2><p>Selamat sayang, kamu berhasil mengumpulkan 14 hati dengan sempurna. Yuk lanjut ke game berikutnya 💖</p><button class="btn" onclick="showLoad()">Next Game ✨</button></div></div>
+<div class="popup-overlay" id="pop2"><div class="popup-white"><h2><i>You Won!</i></h2><p>Keren banget sayang! Ingatan kamu ternyata tajam juga ya, sama seperti caraku mengingat semua tentang kamu 💖</p><button class="btn" onclick="showLetterPage()">Buka Hadiah</button></div></div>
+
+<!-- SURAT 1 -->
+<div class="letter-popup" id="letter1"><div class="letter-card"><span class="close-btn" onclick="closeLetter(1)">×</span><h2><i>FOR U MY FAVORITE MAN 🤍✨</i></h2><p>happy birthday my favorite person...berbahagialah selalu, seperti pelangi yang selalu membahagiakan orang lain. semoga hal-hal baik selalu menyertaimu, dan semoga kasih sayang selalu menyelimutimu. semoga apa yang kamu harapkan, dan apa yang kamu inginkan selalu didengar dan dikabulkan oleh Allah. jadilah orang yang baik, selalu. selalu taat, hormat, dan kuat, ya? taat kepada Allah, hormat kepada orang tua. dan kuat dalam menghadapi rintangan hidup. bersenang-senanglah hari ini, sebab hari ini adalah hari yang diam-diam paling kamu tunggu di antara 365 hari yang panjang. semua doa terbaik selalu menyertaimu, semoga semesta senantiasa melimpahkan berkah untukmu, menjadikan setiap langkahmu bermakna, dan merangkai hari-harimu seindah bait puisi.
+</p><button onclick="document.getElementById('env2').style.display='block';closeLetter(1)" style="background:#5a0a1a;color:white;border:none;padding:12px 30px;border-radius:30px;margin:20px auto 0;display:block;cursor:pointer">next</button></div></div> <!-- URUTAN DIBALIK -->
+
+<!-- SURAT 2 -->
+<div class="letter-popup" id="letter2"><div class="letter-card"><span class="close-btn" onclick="closeLetter(2)">×</span><h2><i>I LOVE U</i></h2><p>aku gabisa merangkai kata-kata manis buat kamu karena aku bukan penulis, aku juga bukan orang yang bisa gombal, karena aku bukan pidi baiq, aku juga bukan orang yang jago buat syair. aku cuma perempuan yang mau lihat kamu tumbuh bareng aku setiap harinya, terimakasih ya sudah memilih aku buat jatuh cinta 🤍</p><button onclick="closeLetter(2)" style="background:#5a0a1a;color:white;border:none;padding:12px 30px;border-radius:30px;margin:20px auto 0;display:block;cursor:pointer">back</button></div></div>
+
+<script>
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active')}
+function checkPin(){let v="";document.querySelectorAll('.pin-input').forEach(i=>v+=i.value);if(v=="2009"){show('welcome')}else{wrongPopup.style.display='flex'}}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inputs = document.querySelectorAll('.pin-input');
+  inputs.forEach((input, index) => {
+    input.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      if (e.target.value.length === 1 && index < inputs.length - 1) {
+        inputs[index + 1].focus();
+      }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === "Backspace" && e.target.value === '' && index > 0) {
+        inputs[index - 1].focus();
+      }
+    });
+  });
+});
+
+function createConfetti(x,y){for(let i=0;i<15;i++){let c=document.createElement('div');c.className='confetti';c.style.left=x+'px';c.style.top=y+'px';c.style.setProperty('--x',(Math.random()-0.5)*150+'px');c.style.setProperty('--y',(Math.random()-0.5)*150+'px');c.style.background=['#ffb3c1','#fff','#ff4d6d'][Math.floor(Math.random()*3)];document.body.appendChild(c);setTimeout(()=>c.remove(),800)}}
+
+let c=0;function startLove(){c=0;let i=setInterval(()=>{if(c<14){let h=document.createElement('div');h.className='heart-game';h.innerHTML='💖';h.style.left=Math.random()*80+10+'%';h.onclick=(e)=>{let rect=h.getBoundingClientRect();createConfetti(rect.left+22,rect.top+22);h.remove();c++;hc.innerText=c;if(c==14){clearInterval(i);setTimeout(()=>pop1.style.display='flex',500)}};document.body.appendChild(h);setTimeout(()=>h.remove(),4000)}},1200)}
+
+function showLoad(){pop1.style.display='none';show('loading');let p=0;let i=setInterval(()=>{p++;lf.style.width=p+'%';lh.style.left=`calc(${p}% - 10px)`;if(p>=100){clearInterval(i);startMem()}},40)}
+
+let cards=['🌸','🌸','💖','💖','🎀','🎀','✨','✨','🎁','🎁','🎂','🎂','🎈','🎈','🥳','🥳'],f1=null,f2=null,lock=false,m=0,timer;
+function startMem(){show('memory');cards.sort(()=>0.5-Math.random());grid.innerHTML='';cards.forEach(e=>{let d=document.createElement('div');d.className='memory-card';d.setAttribute('data-card', e);d.innerHTML='<div class="card-face card-back">🌸</div><div class="card-face card-front">'+e+'</div>';d.onclick=()=>flip(d);grid.appendChild(d)});let t=60;m=0;time.innerText=t;match.innerText=m;timer=setInterval(()=>{t--;time.innerText=t;if(t<=0)clearInterval(timer)},1000)}
+function flip(d){if(lock||d.classList.contains('flipped')||d.classList.contains('matched'))return;d.classList.add('flipped');if(!f1){f1=d;return}f2=d;lock=true;if(f1.getAttribute('data-card') === f2.getAttribute('data-card')){f1.classList.add('matched');f2.classList.add('matched');m++;match.innerText=m;[f1,f2,lock]=[null,null,false];if(m==8){clearInterval(timer);setTimeout(()=>pop2.style.display='flex',500)}}else{setTimeout(()=>{f1.classList.remove('flipped');f2.classList.remove('flipped');[f1,f2,lock]=[null,null,false]},1000)}}
+
+function showLetterPage(){pop2.style.display='none';show('letterPage')}
+function openLetter(n){document.getElementById('letter'+n).style.display='flex'}
+function closeLetter(n){document.getElementById('letter'+n).style.display='none'}
+</script>
+</body>
+</html>
