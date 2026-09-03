@@ -82,7 +82,7 @@ html{overflow-x:hidden}
 <body>
 
 <audio id="bgmusic" loop><source src="musik.mp3"></audio>
-<button onclick="document.getElementById('bgmusic').play()">▶️ Play Music</button>
+
 <div class="heart-bg" style="top:10%;left:10%">❤️</div>
 <div class="heart-bg" style="top:70%;left:80%">❤️</div>
 
@@ -92,7 +92,10 @@ html{overflow-x:hidden}
 <div class="bear-icon">🧸</div>
 <h2>confidential</h2>
 <p>Enter our magic digits to unlock</p>
-<button class="music-btn" onclick="bgmusic.play()"><div class="music-icon">🎵</div> <div><b>KASIH PUTIH</b><br><span style="font-size:10px">Glenn Fredly</span></div></button>
+<button class="music-btn" onclick="toggleMusic()">
+  <div class="music-icon" id="musicIcon">▶️</div> 
+  <div><b>KASIH PUTIH</b><br><span style="font-size:10px">Glenn Fredly</span></div>
+</button>
 <div class="pin-inputs">
   <input maxlength="1" class="pin-input" inputmode="numeric">
   <input maxlength="1" class="pin-input" inputmode="numeric">
@@ -182,6 +185,19 @@ function flip(d){if(lock||d.classList.contains('flipped')||d.classList.contains(
 function showLetterPage(){pop2.style.display='none';show('letterPage')}
 function openLetter(n){document.getElementById('letter'+n).style.display='flex'}
 function closeLetter(n){document.getElementById('letter'+n).style.display='none'}
+
+let isPlaying = false;
+function toggleMusic(){
+  if(isPlaying){
+    bgmusic.pause();
+    document.getElementById('musicIcon').innerHTML = '▶️'; // balik jadi play
+    isPlaying = false;
+  } else {
+    bgmusic.play();
+    document.getElementById('musicIcon').innerHTML = '⏸️'; // jadi pause
+    isPlaying = true;
+  }
+}
 </script>
 </body>
 </html>
